@@ -1,0 +1,303 @@
+/* =========================================================
+   RESET
+========================================================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f3f4f6;
+    color:#111827;
+    padding:15px;
+}
+
+h1{
+    font-size:28px;
+    margin-bottom:18px;
+}
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+.controls{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    margin-bottom:15px;
+}
+
+input,
+textarea,
+select,
+button{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    font-size:14px;
+    font-family:inherit;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+button{
+    background:#1d4ed8;
+    color:white;
+    border:none;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    opacity:0.92;
+}
+
+button.secundario{
+    background:#374151;
+}
+
+button.perigo{
+    background:#b91c1c;
+}
+
+/* =========================================================
+   PAINEL DE IMPRESSÃO
+========================================================= */
+.painel-impressao{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    background:#eef2ff;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+.painel-impressao label{
+    display:flex;
+    flex-direction:column;
+    font-size:12px;
+    color:#374151;
+    gap:4px;
+}
+
+/* =========================================================
+   ÁREA JSON
+========================================================= */
+.json-area{
+    margin-bottom:15px;
+}
+
+/* =========================================================
+   TABELA CONTAINER
+========================================================= */
+.container{
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    overflow:auto;
+    box-shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* =========================================================
+   TABELA
+========================================================= */
+table{
+    border-collapse:collapse;
+    width:max-content;
+    min-width:100%;
+}
+
+th,
+td{
+    border:1px solid #d1d5db;
+    padding:6px;
+    text-align:center;
+    min-width:80px;
+    font-size:13px;
+}
+
+th{
+    background:#1d4ed8;
+    color:#ffffff;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.nome-coluna{
+    min-width:240px;
+    text-align:left;
+}
+
+.obs-coluna{
+    min-width:260px;
+    text-align:left;
+}
+
+/* =========================================================
+   CABEÇALHO EDITÁVEL
+   (texto sempre branco, fundo azul permanente)
+========================================================= */
+.th-editavel{
+    background:#1d4ed8 !important;
+    color:#ffffff !important;
+    cursor:text;
+    caret-color:#ffffff;
+}
+
+.th-editavel:focus{
+    outline:2px solid #fbbf24;
+    background:#1e40af !important;
+    color:#ffffff !important;
+}
+
+/* =========================================================
+   CÉLULAS
+========================================================= */
+.editavel{
+    background:white;
+    cursor:text;
+}
+
+.editavel:focus{
+    outline:2px solid #2563eb;
+    background:#dbeafe;
+}
+
+.observacao{
+    text-align:left;
+    white-space:pre-wrap;
+    font-size:12px;
+    color:#374151;
+}
+
+.acoes{
+    width:80px;
+    min-width:80px;
+}
+
+.btn-remover{
+    background:#b91c1c;
+    color:white;
+    border:none;
+    border-radius:6px;
+    padding:4px 8px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+.total{
+    background:#dbeafe;
+    font-weight:bold;
+}
+
+/* =========================================================
+   AUTO-AJUSTE PARA MUITAS COLUNAS
+========================================================= */
+.compacto th,
+.compacto td{
+    font-size:11px;
+    padding:3px;
+    min-width:55px;
+}
+
+.compacto .nome-coluna{
+    min-width:160px;
+}
+
+.compacto .obs-coluna{
+    min-width:180px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+@media screen and (max-width:700px){
+    th,
+    td{
+        min-width:65px;
+        font-size:11px;
+        padding:4px;
+    }
+    .nome-coluna{
+        min-width:180px;
+    }
+    .obs-coluna{
+        min-width:180px;
+    }
+}
+
+/* =========================================================
+   IMPRESSÃO
+========================================================= */
+@media print{
+    body{
+        padding:0;
+        background:white;
+    }
+
+    .controls,
+    .json-area,
+    .painel-impressao,
+    .acoes,
+    .btn-remover{
+        display:none !important;
+    }
+
+    .container{
+        box-shadow:none;
+        border:none;
+        padding:0;
+        overflow:visible;
+    }
+
+    h1{
+        margin-bottom:8px;
+        font-size:16px;
+    }
+
+    table{
+        width:100%;
+        table-layout:fixed;
+    }
+
+    th,
+    td{
+        font-size:8px;
+        padding:3px;
+        word-break:break-word;
+    }
+
+    th,
+    .th-editavel{
+        background:#1d4ed8 !important;
+        color:#ffffff !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+
+    .total{
+        background:#dbeafe !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+
+    /* Sem coluna de observações na impressão compacta */
+    body.print-sem-obs .obs-coluna{
+        display:none;
+    }
+}
+
