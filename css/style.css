@@ -151,14 +151,38 @@ th{
 .th-editavel{
     background:#1d4ed8 !important;
     color:#ffffff !important;
-    cursor:text;
     caret-color:#ffffff;
+    white-space:nowrap;
 }
 
-.th-editavel:focus{
+.th-nome{
+    cursor:text;
+    outline:none;
+    padding:0 2px;
+}
+
+.th-nome:focus{
     outline:2px solid #fbbf24;
-    background:#1e40af !important;
-    color:#ffffff !important;
+    border-radius:3px;
+}
+
+.btn-remover-atividade{
+    background:transparent;
+    color:#fbbf24;
+    border:none;
+    width:auto;
+    padding:0 4px;
+    margin-left:4px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:bold;
+    line-height:1;
+    border-radius:3px;
+}
+
+.btn-remover-atividade:hover{
+    background:#b91c1c;
+    color:#ffffff;
 }
 
 /* =========================================================
@@ -253,7 +277,8 @@ th{
     .json-area,
     .painel-impressao,
     .acoes,
-    .btn-remover{
+    .btn-remover,
+    .btn-remover-atividade{
         display:none !important;
     }
 

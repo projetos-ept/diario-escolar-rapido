@@ -30,33 +30,60 @@ function gerarThead(){
     thAluno.classList.add("nome-coluna");
     trHead.appendChild(thAluno);
 
-    /* Atividades (renomeáveis, NÃO removíveis) */
+    /* Atividades (renomeáveis e removíveis) */
     dados.atividades.forEach((atividade, index) => {
         const th = document.createElement("th");
-        th.contentEditable = "true";
         th.classList.add("th-editavel");
-        th.textContent = atividade;
-        th.title = "Clique para renomear (atividades não podem ser removidas para preservar dados)";
 
-        th.addEventListener("focus", () => {
-            th.dataset.original = th.textContent;
-            selecionarTudo(th);
+        const span = document.createElement("span");
+        span.contentEditable = "true";
+        span.classList.add("th-nome");
+        span.textContent = atividade;
+        span.title = "Clique para renomear";
+
+        span.addEventListener("focus", () => {
+            span.dataset.original = span.textContent;
+            selecionarTudo(span);
         });
 
-        th.addEventListener("input", () => {
-            const novo = th.textContent.trim();
+        span.addEventListener("input", () => {
+            const novo = span.textContent.trim();
             if(novo){
                 dados.atividades[index] = novo;
                 salvarLocalStorage();
             }
         });
 
-        th.addEventListener("blur", () => {
-            if(!th.textContent.trim()){
-                th.textContent = dados.atividades[index];
+        span.addEventListener("blur", () => {
+            if(!span.textContent.trim()){
+                span.textContent = dados.atividades[index];
             }
         });
 
+        const btnRemover = document.createElement("button");
+        btnRemover.type = "button";
+        btnRemover.contentEditable = "false";
+        btnRemover.classList.add("btn-remover-atividade");
+        btnRemover.textContent = "✕";
+        btnRemover.title = "Remover atividade";
+        btnRemover.addEventListener("click", e => {
+            e.stopPropagation();
+            const nome = dados.atividades[index];
+            if(dados.atividades.length <= 1){
+                alert("É necessário manter pelo menos uma atividade.");
+                return;
+            }
+            if(!confirm("Remover a atividade \"" + nome + "\" e apagar todas as suas notas?")){
+                return;
+            }
+            dados.atividades.splice(index, 1);
+            dados.alunos.forEach(a => a.notas.splice(index, 1));
+            salvarLocalStorage();
+            gerarTabela();
+        });
+
+        th.appendChild(span);
+        th.appendChild(btnRemover);
         trHead.appendChild(th);
     });
 
@@ -150,17 +177,23 @@ function criarCelulaNota(aluno, row, col){
     td.addEventListener("keydown", navegarTeclado);
 
     td.addEventListener("blur", () => {
-        const valor = normalizarNota(td.textContent);
+        let valor = normalizarNota(td.textContent);
         const anterior = aluno.notas[col];
         aluno.notas[col] = valor;
 
         if(calcularSomaCrua(aluno) > TOTAL_MAXIMO){
             alert("A somatória máxima é " + TOTAL_MAXIMO + ".");
             aluno.notas[col] = anterior;
+            valor = anterior;
         }
 
+        td.textContent = Number(valor).toFixed(1);
+        aluno.total = calcularTotal(aluno);
+
+        const tdTotal = td.parentElement.querySelector(".total");
+        if(tdTotal) tdTotal.textContent = aluno.total.toFixed(1);
+
         salvarLocalStorage();
-        gerarTabela();
     });
 
     return td;
