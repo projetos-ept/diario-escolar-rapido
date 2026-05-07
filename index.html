@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Diário Escolar Inteligente</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body{
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    background:#f3f4f6;
+
+    color:#111827;
+
+    padding:15px;
+
+}
+
+/* =========================================================
+   TITULO
+========================================================= */
+
+h1{
+
+    font-size:28px;
+
+    margin-bottom:18px;
+
+}
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+.controls{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+}
+
+input,
+textarea,
+button{
+
+    width:100%;
+
+    padding:10px;
+
+    border-radius:8px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
+}
+
+textarea{
+
+    min-height:120px;
+
+    resize:vertical;
+
+}
+
+button{
+
+    background:#1d4ed8;
+
+    color:white;
+
+    border:none;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+}
+
+button:hover{
+
+    opacity:0.92;
+
+}
+
+/* =========================================================
+   ÁREA JSON
+========================================================= */
+
+.json-area{
+
+    margin-bottom:15px;
+
+}
+
+/* =========================================================
+   TABELA CONTAINER
+========================================================= */
+
+.container{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    overflow:auto;
+
+    box-shadow:0 2px 12px rgba(0,0,0,0.08);
+
+}
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+table{
+
+    border-collapse:collapse;
+
+    width:max-content;
+
+    min-width:100%;
+
+}
+
+th,
+td{
+
+    border:1px solid #d1d5db;
+
+    padding:6px;
+
+    text-align:center;
+
+    min-width:80px;
+
+    font-size:13px;
+
+}
+
+th{
+
+    background:#1d4ed8;
+
+    color:white;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
+
+}
+
+.nome-coluna{
+
+    min-width:240px;
+
+    text-align:left;
+
+}
+
+/* =========================================================
+   CELULAS
+========================================================= */
+
+.editavel{
+
+    background:white;
+
+    cursor:text;
+
+}
+
+.editavel:focus{
+
+    outline:2px solid #2563eb;
+
+    background:#eff6ff;
+
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.total{
+
+    background:#dbeafe;
+
+    font-weight:bold;
+
+}
+
+/* =========================================================
+   BUSCA
+========================================================= */
+
+.oculto{
+
+    display:none;
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media screen and (max-width:700px){
+
+    th,
+    td{
+
+        min-width:65px;
+
+        font-size:11px;
+
+        padding:4px;
+
+    }
+
+    .nome-coluna{
+
+        min-width:180px;
+
+    }
+
+}
+
+/* =========================================================
+   IMPRESSÃO
+========================================================= */
+
+@media print{
+
+    body{
+
+        padding:0;
+
+        background:white;
+
+    }
+
+    /* ================================================
+       ESCONDER INTERFACE
+    ================================================ */
+
+    .controls,
+    .json-area{
+
+        display:none !important;
+
+    }
+
+    /* ================================================
+       CONTAINER
+    ================================================ */
+
+    .container{
+
+        box-shadow:none;
+
+        border:none;
+
+        padding:0;
+
+        overflow:visible;
+
+    }
+
+    /* ================================================
+       TITULO
+    ================================================ */
+
+    h1{
+
+        margin-bottom:8px;
+
+        font-size:16px;
+
+    }
+
+    /* ================================================
+       TABELA
+    ================================================ */
+
+    table{
+
+        width:100%;
+
+        table-layout:fixed;
+
+    }
+
+    th,
+    td{
+
+        font-size:8px;
+
+        padding:3px;
+
+        word-break:break-word;
+
+    }
+
+    th{
+
+        background:#1d4ed8 !important;
+
+        color:white !important;
+
+        -webkit-print-color-adjust:exact;
+
+        print-color-adjust:exact;
+
+    }
+
+    .total{
+
+        background:#dbeafe !important;
+
+        -webkit-print-color-adjust:exact;
+
+        print-color-adjust:exact;
+
+    }
+
+    /* ================================================
+       PÁGINA
+    ================================================ */
+
+    @page{
+
+        size:A4 landscape;
+
+        margin:8mm;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1 id="tituloTabela">
+    Diário Escolar
+</h1>
+
+<!-- =====================================================
+     CONTROLES
+===================================================== -->
+
+<div class="controls">
+
+    <input
+        type="text"
+        id="tituloInput"
+        placeholder="Novo título">
+
+    <button onclick="alterarTitulo()">
+        Alterar título
+    </button>
+
+    <input
+        type="text"
+        id="novoAluno"
+        placeholder="Novo aluno">
+
+    <button onclick="adicionarAluno()">
+        Adicionar aluno
+    </button>
+
+    <input
+        type="text"
+        id="novaAtividade"
+        placeholder="Nova atividade">
+
+    <button onclick="adicionarAtividade()">
+        Adicionar atividade
+    </button>
+
+    <input
+        type="text"
+        id="buscaRapida"
+        placeholder="Busca rápida">
+
+    <button onclick="window.print()">
+        Imprimir A4
+    </button>
+
+    <button onclick="exportarJSON()">
+        Exportar JSON
+    </button>
+
+    <button onclick="exportarJSONTotal()">
+        Exportar Total JSON
+    </button>
+
+    <input
+        type="file"
+        id="importarArquivo">
+
+    <button onclick="importarArquivoJSON()">
+        Importar Arquivo JSON
+    </button>
+
+</div>
+
+<!-- =====================================================
+     JSON
+===================================================== -->
+
+<div class="json-area">
+
+<textarea
+id="jsonPaste"
+placeholder="Cole o JSON aqui"></textarea>
+
+<button
+onclick="importarJSONColado()"
+style="margin-top:10px;">
+
+Importar JSON Colado
+
+</button>
+
+</div>
+
+<!-- =====================================================
+     TABELA
+===================================================== -->
+
+<div class="container">
+
+<table id="tabela"></table>
+
+</div>
+
+<script>
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+const STORAGE_KEY =
+    "diarioEscolarInteligente";
+
+/* =========================================================
+   DADOS
+========================================================= */
+
+let dados = {
+
+    titulo:"Diário Escolar",
+
+    atividades:[
+        "P1",
+        "P2",
+        "P3"
+    ],
+
+    alunos:[]
+};
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function salvarLocalStorage(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(dados)
+    );
+
+}
+
+function carregarLocalStorage(){
+
+    const salvo =
+        localStorage.getItem(STORAGE_KEY);
+
+    if(salvo){
+
+        dados = JSON.parse(salvo);
+
+    }
+
+}
+
+/* =========================================================
+   FORMATAR NOTA
+========================================================= */
+
+function normalizarNota(valor){
+
+    valor = String(valor)
+        .replace(",", ".")
+        .trim();
+
+    if(valor === ""){
+
+        return 0;
+
+    }
+
+    /* ================================================
+       25 => 2.5
+    ================================================ */
+
+    if(
+        !valor.includes(".")
+        &&
+        Number(valor) > 10
+    ){
+
+        valor =
+            Number(valor) / 10;
+
+    }
+
+    valor = Number(valor);
+
+    if(isNaN(valor)){
+
+        valor = 0;
+
+    }
+
+    if(valor < 0){
+
+        valor = 0;
+
+    }
+
+    if(valor > 10){
+
+        valor = 10;
+
+    }
+
+    return Number(
+        valor.toFixed(1)
+    );
+
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+function calcularTotal(aluno){
+
+    let total =
+        aluno.notas.reduce(
+            (a,b)=>a + Number(b || 0),
+            0
+        );
+
+    if(total > 10){
+
+        total = 10;
+
+    }
+
+    return Number(
+        total.toFixed(1)
+    );
+
+}
+
+/* =========================================================
+   SELECIONAR TEXTO
+========================================================= */
+
+function selecionarTudo(elemento){
+
+    setTimeout(()=>{
+
+        const range =
+            document.createRange();
+
+        range.selectNodeContents(
+            elemento
+        );
+
+        const sel =
+            window.getSelection();
+
+        sel.removeAllRanges();
+
+        sel.addRange(range);
+
+    },0);
+
+}
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function navegarTeclado(e){
+
+    const atual =
+        e.target;
+
+    const row =
+        Number(atual.dataset.row);
+
+    const col =
+        Number(atual.dataset.col);
+
+    let prox = null;
+
+    switch(e.key){
+
+        case "ArrowRight":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row}"][data-col="${col+1}"]`
+                );
+
+            break;
+
+        case "ArrowLeft":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row}"][data-col="${col-1}"]`
+                );
+
+            break;
+
+        case "ArrowDown":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row+1}"][data-col="${col}"]`
+                );
+
+            break;
+
+        case "ArrowUp":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row-1}"][data-col="${col}"]`
+                );
+
+            break;
+
+        case "Enter":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row+1}"][data-col="${col}"]`
+                );
+
+            break;
+
+        case "Tab":
+
+            e.preventDefault();
+
+            prox =
+                document.querySelector(
+                    `[data-row="${row}"][data-col="${col+1}"]`
+                );
+
+            break;
+    }
+
+    if(prox){
+
+        prox.focus();
+
+        selecionarTudo(prox);
+
+    }
+
+}
+
+/* =========================================================
+   GERAR TABELA
+========================================================= */
+
+function gerarTabela(){
+
+    const tabela =
+        document.getElementById("tabela");
+
+    tabela.innerHTML = "";
+
+    /* =====================================================
+       HEAD
+    ===================================================== */
+
+    const thead =
+        document.createElement("thead");
+
+    const trHead =
+        document.createElement("tr");
+
+    /* ================================================
+       ALUNO
+    ================================================ */
+
+    const thAluno =
+        document.createElement("th");
+
+    thAluno.textContent = "Aluno";
+
+    thAluno.classList.add("nome-coluna");
+
+    trHead.appendChild(thAluno);
+
+    /* ================================================
+       ATIVIDADES
+    ================================================ */
+
+    dados.atividades.forEach(
+        (atividade, index)=>{
+
+        const th =
+            document.createElement("th");
+
+        th.contentEditable = true;
+
+        th.classList.add("editavel");
+
+        th.style.color = "white";
+
+        th.textContent = atividade;
+
+        th.addEventListener(
+            "focus",
+            ()=>selecionarTudo(th)
+        );
+
+        th.addEventListener(
+            "input",
+            ()=>{
+
+            dados.atividades[index] =
+                th.textContent.trim();
+
+            salvarLocalStorage();
+
+        });
+
+        trHead.appendChild(th);
+
+    });
+
+    /* ================================================
+       TOTAL
+    ================================================ */
+
+    const thTotal =
+        document.createElement("th");
+
+    thTotal.textContent = "Somatória";
+
+    trHead.appendChild(thTotal);
+
+    thead.appendChild(trHead);
+
+    tabela.appendChild(thead);
+
+    /* =====================================================
+       BODY
+    ===================================================== */
+
+    const tbody =
+        document.createElement("tbody");
+
+    dados.alunos.forEach(
+        (aluno,row)=>{
+
+        const tr =
+            document.createElement("tr");
+
+        tr.dataset.nome =
+            aluno.nome.toLowerCase();
+
+        /* ============================================
+           NOME
+        ============================================ */
+
+        const tdNome =
+            document.createElement("td");
+
+        tdNome.contentEditable = true;
+
+        tdNome.classList.add(
+            "editavel",
+            "nome-coluna"
+        );
+
+        tdNome.textContent = aluno.nome;
+
+        tdNome.dataset.row = row;
+        tdNome.dataset.col = 0;
+
+        tdNome.addEventListener(
+            "focus",
+            ()=>selecionarTudo(tdNome)
+        );
+
+        tdNome.addEventListener(
+            "input",
+            ()=>{
+
+            aluno.nome =
+                tdNome.textContent;
+
+            salvarLocalStorage();
+
+        });
+
+        tdNome.addEventListener(
+            "keydown",
+            navegarTeclado
+        );
+
+        tr.appendChild(tdNome);
+
+        /* ============================================
+           NOTAS
+        ============================================ */
+
+        dados.atividades.forEach(
+            (atividade,col)=>{
+
+            const td =
+                document.createElement("td");
+
+            td.contentEditable = true;
+
+            td.classList.add("editavel");
+
+            td.dataset.row = row;
+            td.dataset.col = col + 1;
+
+            td.textContent =
+                Number(
+                    aluno.notas[col] || 0
+                ).toFixed(1);
+
+            /* ========================================
+               FOCO
+            ======================================== */
+
+            td.addEventListener(
+                "focus",
+                ()=>selecionarTudo(td)
+            );
+
+            /* ========================================
+               TECLADO
+            ======================================== */
+
+            td.addEventListener(
+                "keydown",
+                navegarTeclado
+            );
+
+            /* ========================================
+               BLUR
+            ======================================== */
+
+            td.addEventListener(
+                "blur",
+                ()=>{
+
+                let valor =
+                    normalizarNota(
+                        td.textContent
+                    );
+
+                aluno.notas[col] = valor;
+
+                let soma =
+                    aluno.notas.reduce(
+                        (a,b)=>a+b,
+                        0
+                    );
+
+                /* ================================
+                   LIMITE TOTAL
+                ================================ */
+
+                if(soma > 10){
+
+                    alert(
+                        "A somatória máxima é 10."
+                    );
+
+                    aluno.notas[col] = 0;
+
+                }
+
+                salvarLocalStorage();
+
+                gerarTabela();
+
+            });
+
+            tr.appendChild(td);
+
+        });
+
+        /* ============================================
+           TOTAL
+        ============================================ */
+
+        aluno.total =
+            calcularTotal(aluno);
+
+        const tdTotal =
+            document.createElement("td");
+
+        tdTotal.textContent =
+            aluno.total.toFixed(1);
+
+        tdTotal.classList.add("total");
+
+        tr.appendChild(tdTotal);
+
+        tbody.appendChild(tr);
+
+    });
+
+    tabela.appendChild(tbody);
+
+    document.getElementById(
+        "tituloTabela"
+    ).textContent = dados.titulo;
+
+}
+
+/* =========================================================
+   ALUNO
+========================================================= */
+
+function adicionarAluno(){
+
+    const campo =
+        document.getElementById(
+            "novoAluno"
+        );
+
+    const nome =
+        campo.value.trim();
+
+    if(!nome){
+
+        return;
+
+    }
+
+    dados.alunos.push({
+
+        nome:nome,
+
+        notas:
+            dados.atividades.map(()=>0)
+
+    });
+
+    campo.value = "";
+
+    salvarLocalStorage();
+
+    gerarTabela();
+
+}
+
+/* =========================================================
+   ATIVIDADE
+========================================================= */
+
+function adicionarAtividade(){
+
+    const campo =
+        document.getElementById(
+            "novaAtividade"
+        );
+
+    const atividade =
+        campo.value.trim();
+
+    if(!atividade){
+
+        return;
+
+    }
+
+    dados.atividades.push(
+        atividade
+    );
+
+    dados.alunos.forEach(
+        aluno=>{
+
+        aluno.notas.push(0);
+
+    });
+
+    campo.value = "";
+
+    salvarLocalStorage();
+
+    gerarTabela();
+
+}
+
+/* =========================================================
+   TITULO
+========================================================= */
+
+function alterarTitulo(){
+
+    const titulo =
+        document.getElementById(
+            "tituloInput"
+        ).value.trim();
+
+    if(!titulo){
+
+        return;
+
+    }
+
+    dados.titulo = titulo;
+
+    salvarLocalStorage();
+
+    gerarTabela();
+
+}
+
+/* =========================================================
+   BUSCA
+========================================================= */
+
+document
+.getElementById("buscaRapida")
+.addEventListener(
+    "input",
+    ()=>{
+
+    const termo =
+        document
+        .getElementById(
+            "buscaRapida"
+        )
+        .value
+        .toLowerCase();
+
+    document
+    .querySelectorAll(
+        "tbody tr"
+    )
+    .forEach(linha=>{
+
+        const nome =
+            linha.dataset.nome;
+
+        linha.style.display =
+            nome.includes(termo)
+            ? ""
+            : "none";
+
+    });
+
+});
+
+/* =========================================================
+   EXPORTAÇÃO
+========================================================= */
+
+function baixarJSON(objeto,nome){
+
+    const json =
+        JSON.stringify(
+            objeto,
+            null,
+            4
+        );
+
+    const blob =
+        new Blob(
+            [json],
+            {
+                type:"application/json"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download = nome;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+function exportarJSON(){
+
+    baixarJSON(
+        dados,
+        "diario.json"
+    );
+
+}
+
+function exportarJSONTotal(){
+
+    baixarJSON({
+
+        ...dados,
+
+        mediaTurma:
+            calcularMediaTurma()
+
+    },
+
+    "diario-total.json");
+
+}
+
+/* =========================================================
+   IMPORTAÇÃO
+========================================================= */
+
+function importarArquivoJSON(){
+
+    const arquivo =
+        document.getElementById(
+            "importarArquivo"
+        ).files[0];
+
+    if(!arquivo){
+
+        return;
+
+    }
+
+    const leitor =
+        new FileReader();
+
+    leitor.onload = e=>{
+
+        dados =
+            JSON.parse(
+                e.target.result
+            );
+
+        salvarLocalStorage();
+
+        gerarTabela();
+
+    };
+
+    leitor.readAsText(arquivo);
+
+}
+
+function importarJSONColado(){
+
+    try{
+
+        dados =
+            JSON.parse(
+                document
+                .getElementById(
+                    "jsonPaste"
+                ).value
+            );
+
+        salvarLocalStorage();
+
+        gerarTabela();
+
+        alert("JSON importado.");
+
+    }catch{
+
+        alert("JSON inválido.");
+
+    }
+
+}
+
+/* =========================================================
+   MÉDIA
+========================================================= */
+
+function calcularMediaTurma(){
+
+    if(dados.alunos.length === 0){
+
+        return 0;
+
+    }
+
+    let soma = 0;
+
+    dados.alunos.forEach(
+        aluno=>{
+
+        soma += aluno.total || 0;
+
+    });
+
+    return Number(
+        (
+            soma /
+            dados.alunos.length
+        ).toFixed(1)
+    );
+
+}
+
+/* =========================================================
+   TESTES
+========================================================= */
+
+function smokeTests(){
+
+    console.log(
+        "25 =>",
+        normalizarNota(25)
+    );
+
+    console.log(
+        "3 =>",
+        normalizarNota(3)
+    );
+
+    console.log(
+        "9.7 =>",
+        normalizarNota(9.7)
+    );
+
+    console.log(
+        "TOTAL:",
+        calcularTotal({
+            notas:[3,2,5]
+        })
+    );
+
+}
+
+smokeTests();
+
+/* =========================================================
+   INIT
+========================================================= */
+
+carregarLocalStorage();
+
+gerarTabela();
+
+</script>
+
+</body>
+</html>
