@@ -4,231 +4,173 @@ Sistema HTML offline para gerenciamento de notas escolares com:
 
 - tabela dinâmica
 - importação/exportação JSON
-- navegação por teclado
-- impressão otimizada em A4
+- navegação por teclado tipo Excel
+- impressão A4 customizável (paisagem/retrato, margens, observações)
 - salvamento automático em LocalStorage
-- funcionamento offline
+- funcionamento 100% offline
+- coluna de observações por aluno
 
 ---
 
 # Objetivo
 
-O projeto foi criado para funcionar como um:
+Sistema autocontido para:
 
 - mini diário eletrônico
 - planilha escolar portátil
-- sistema offline de lançamento de notas
-- gerador de tabelas imprimíveis
+- lançamento de notas e observações
+- gerador de relatórios imprimíveis em A4
 
-Tudo utilizando apenas:
+Construído apenas com HTML, CSS e JavaScript puro. Sem servidor, banco de dados, internet ou frameworks. Exportou JSON: só subir e rodar em qualquer lugar.
 
-- HTML
-- CSS
-- JavaScript puro
+---
 
-Sem necessidade de:
+# Estrutura do projeto (v2)
 
-- servidor
-- banco de dados
-- internet
-- frameworks
+```text
+diario-escolar-rapido/
+├── index.html
+├── css/
+│   └── style.css
+└── js/
+    ├── storage.js      → persistência e migração de dados
+    ├── validacao.js    → normalização de notas e somas
+    ├── teclado.js      → navegação tipo planilha
+    ├── tabela.js       → render da tabela e células
+    ├── importacao.js   → importar JSON (arquivo / colado)
+    ├── exportacao.js   → exportar JSON (simples / total)
+    ├── impressao.js    → painel A4 customizável
+    └── app.js          → orquestração e inicialização
+```
 
 ---
 
 # Funcionalidades
 
-## Gestão de estudantes
+## Alunos
 
-✅ adicionar estudantes  
-✅ editar nome diretamente na tabela  
-✅ busca rápida de estudantes  
+- adicionar aluno único
+- adicionar alunos em massa (um nome por linha)
+- editar nome diretamente na tabela
+- remover aluno (com confirmação)
+- busca rápida por nome
 
----
+## Atividades
 
-## Gestão de atividades
-
-✅ adicionar atividades  
-✅ editar título da atividade clicando no cabeçalho  
-✅ atividades dinâmicas  
-
----
+- adicionar atividade
+- renomear clicando no cabeçalho
+- remover atividade pelo botão `✕` no header (com confirmação)
+- mantém no mínimo uma atividade
 
 ## Notas
 
-✅ edição rápida  
-✅ navegação por teclado estilo Excel  
+- edição inline
+- seleção automática ao focar
+- normalização inteligente de entrada
+- limite de somatória total = 10
+- atualização in-place do total (sem rebuild)
 
-### Regras automáticas
+### Regras de normalização
 
 | Entrada | Resultado |
-|---|---|
-| `3` | `3.0` |
-| `25` | `2.5` |
-| `9.7` | `9.7` |
+|---------|-----------|
+| `3`     | `3.0`     |
+| `25`    | `2.5`     |
+| `9.7`   | `9.7`     |
+| `,5`    | `0.5`     |
 
----
+## Observações
 
-## Controle de somatória
+Coluna dedicada por aluno para registrar:
 
-A soma total das atividades:
+- comportamento
+- pendências
+- recuperação
+- entrega de atividade
 
-```text
-P1 + P2 + P3 + ... + Pn
-```
-
-nunca pode ultrapassar:
-
-```text
-10.0
-```
-
-Se ultrapassar:
-
-- o sistema alerta
-- a última nota é zerada automaticamente
+Suporta múltiplas linhas (Enter cria nova linha dentro da observação).
 
 ---
 
 # Navegação por teclado
 
-## Suportado
-
-| Tecla | Função |
-|---|---|
-| ↑ | sobe |
-| ↓ | desce |
-| ← | esquerda |
-| → | direita |
-| Enter | próxima linha |
-| Tab | próxima coluna |
-
----
-
-# Impressão
-
-## Otimizado para
-
-✅ folha A4  
-✅ modo paisagem  
-✅ PDF  
+| Tecla       | Função                                              |
+|-------------|------------------------------------------------------|
+| `↑` `↓`     | célula acima / abaixo                               |
+| `←` `→`     | célula esquerda / direita                           |
+| `→` no fim  | pula para o início da próxima linha                 |
+| `←` no início | volta para o fim da linha anterior                |
+| `Enter`     | próxima linha (em observações: nova linha no texto) |
+| `Tab`       | próxima coluna                                      |
+| `Shift+Tab` | coluna anterior                                     |
+| `Esc`       | cancela edição e restaura valor original            |
 
 ---
 
-## A impressão remove automaticamente
+# Impressão A4 customizável
 
-- botões
-- campos
-- textarea JSON
-- importadores
-- interface de edição
+Painel de impressão com:
 
-Imprime apenas:
+- **Orientação**: paisagem ou retrato
+- **Margem**: 5 / 8 / 12 / 20 mm
+- **Observações**: incluir ou ocultar na impressão
 
-✅ título  
-✅ tabela  
-✅ notas  
+Configuração persistida no JSON e aplicada via `@page` dinâmico.
 
----
+A impressão remove automaticamente:
 
-# Salvamento automático
-
-Todos os dados são salvos automaticamente usando:
-
-```javascript
-localStorage
-```
-
-Mesmo fechando o navegador os dados permanecem salvos.
+- controles
+- campos de busca e título
+- textareas de JSON
+- painel de configuração
+- botões de remover
 
 ---
 
-# Importação JSON
+# Persistência
 
-## 1. Colar JSON
+Todos os dados são salvos automaticamente em `localStorage`. Fechar o navegador não perde nada.
 
-Área:
-
-```text
-Cole o JSON aqui
-```
+Chave: `diarioEscolarInteligente`
 
 ---
 
-## 2. Arquivo JSON
+# Importação / Exportação JSON
 
-Botão:
+## Importar
 
-```text
-Importar Arquivo JSON
-```
+- **Arquivo**: campo `file` + botão `Importar Arquivo JSON`
+- **Colado**: textarea + botão `Importar JSON Colado`
 
----
+A importação aplica migração automática para preservar compatibilidade com JSONs antigos (preenche `observacoes` e `config` ausentes).
 
-# Exportação JSON
+## Exportar
 
-## Exportação simples
+- **Exportar JSON**: dados puros (`titulo`, `atividades`, `alunos`, `config`)
+- **Exportar Total JSON**: inclui `mediaTurma` e `geradoEm`
 
-```text
-Exportar JSON
-```
-
-Exporta:
-
-- alunos
-- notas
-- atividades
-
----
-
-## Exportação total
-
-```text
-Exportar Total JSON
-```
-
-Exporta:
-
-- alunos
-- atividades
-- totais
-- média da turma
-- configurações
+Nome do arquivo gerado a partir do slug do título.
 
 ---
 
 # Estrutura JSON
 
-## Estrutura padrão
-
 ```json
 {
     "titulo": "Diário Escolar",
-
-    "atividades": [
-        "P1",
-        "P2",
-        "P3"
-    ],
-
+    "atividades": ["P1", "P2", "P3"],
     "alunos": [
-
         {
             "nome": "Aluno 1",
-            "notas": [2,3,5]
+            "notas": [2, 3, 5],
+            "observacoes": "Precisa entregar relatório"
         }
-
-    ]
-}
-```
-
----
-
-# Estrutura de aluno
-
-```json
-{
-    "nome":"Aluno",
-    "notas":[2,3,5]
+    ],
+    "config": {
+        "orientacao": "landscape",
+        "margem": "8mm",
+        "mostrarObservacoesNaImpressao": true
+    }
 }
 ```
 
@@ -236,142 +178,62 @@ Exporta:
 
 # Como executar
 
-## Método simples
+Basta abrir `index.html` no navegador (Chrome, Edge ou Firefox). Funciona via `file://`, sem servidor.
 
-Basta abrir:
+Para servir localmente (opcional):
 
-```text
-arquivo.html
+```bash
+python3 -m http.server 8000
 ```
-
-no navegador.
-
-Recomendado:
-
-- Chrome
-- Edge
-- Firefox
 
 ---
 
 # Compatibilidade
 
-## Desktop
-
-✅ Windows  
-✅ Linux  
-✅ macOS  
-
----
-
-## Mobile
-
-✅ Android  
-✅ iPhone  
+| Plataforma | Suporte |
+|------------|---------|
+| Windows    | ✅      |
+| Linux      | ✅      |
+| macOS      | ✅      |
+| Android    | ✅      |
+| iOS        | ✅      |
 
 ---
 
-# Tecnologias utilizadas
+# Tecnologias
 
 - HTML5
 - CSS3
-- JavaScript Vanilla
+- JavaScript Vanilla (ES6+)
+
+Zero dependências externas.
 
 ---
 
-# Arquitetura
+# Roadmap futuro
 
-O sistema é dividido em:
+Já entregue (v2):
 
-| Área | Função |
-|---|---|
-| HTML | estrutura |
-| CSS | aparência |
-| JS | lógica |
+- ✅ refatoração modular
+- ✅ cabeçalho editável corrigido
+- ✅ coluna de observações
+- ✅ remoção de atividades
+- ✅ adição em massa de alunos
+- ✅ navegação infinita por teclado
+- ✅ painel de impressão customizável
+- ✅ auto-ajuste para muitas colunas
 
----
+Possível v3:
 
-# Recursos implementados
-
-## Interface
-
-✅ responsiva  
-✅ adaptável  
-✅ impressão limpa  
-✅ tabela dinâmica  
-
----
-
-## Edição
-
-✅ inline editing  
-✅ seleção automática  
-✅ foco inteligente  
-
----
-
-## Persistência
-
-✅ LocalStorage  
-✅ exportação JSON  
-✅ importação JSON  
-
----
-
-# Smoke Tests implementados
-
-O sistema possui testes básicos internos:
-
-```javascript
-normalizarNota(25)
-normalizarNota(3)
-calcularTotal([3,2,5])
-```
-
----
-
-# Melhorias futuras sugeridas
-
-## Possíveis evoluções
-
-- médias automáticas
-- recuperação
-- frequência
-- conceitos
 - exportação XLSX
-- exportação PDF direta
+- geração direta de PDF
 - PWA instalável
+- IndexedDB no lugar de LocalStorage
+- múltiplas turmas em um único arquivo
 - modo escuro
-- múltiplas turmas
-- autenticação
-- sincronização em nuvem
-
----
-
-# Estrutura recomendada futura
-
-```json
-{
-    "config": {},
-    "atividades": [],
-    "alunos": [],
-    "estatisticas": {}
-}
-```
 
 ---
 
 # Licença
 
-Uso livre para fins:
-
-- educacionais
-- escolares
-- acadêmicos
-- institucionais
-
----
-
-# Autor
-
-Projeto desenvolvido para gerenciamento escolar simples, portátil e offline utilizando tecnologias web puras.
+Uso livre para fins educacionais, escolares, acadêmicos e institucionais.
