@@ -61,16 +61,35 @@ function alterarTitulo(){
     gerarTabela();
 }
 
+let filtroSemNotaAtivo = false;
+
 function configurarBusca(){
     document
         .getElementById("buscaRapida")
-        .addEventListener("input", e => {
-            const termo = e.target.value.toLowerCase();
-            document.querySelectorAll("tbody tr").forEach(linha => {
-                const nome = linha.dataset.nome || "";
-                linha.style.display = nome.includes(termo) ? "" : "none";
-            });
-        });
+        .addEventListener("input", aplicarFiltros);
+}
+
+function aplicarFiltros(){
+    const termo = document.getElementById("buscaRapida").value.toLowerCase();
+
+    document.querySelectorAll("tbody tr").forEach((linha, row) => {
+        const nome = linha.dataset.nome || "";
+        const aluno = dados.alunos[row];
+        const casaTermo = nome.includes(termo);
+        const semNota = aluno && aluno.notas.some(n => Number(n) === 0);
+        const passa = casaTermo && (!filtroSemNotaAtivo || semNota);
+        linha.style.display = passa ? "" : "none";
+    });
+}
+
+function alternarFiltroSemNota(){
+    filtroSemNotaAtivo = !filtroSemNotaAtivo;
+    const btn = document.getElementById("btnSemNota");
+    btn.classList.toggle("ativo", filtroSemNotaAtivo);
+    btn.textContent = filtroSemNotaAtivo
+        ? "Mostrar todos"
+        : "Estudantes sem nota";
+    aplicarFiltros();
 }
 
 function smokeTests(){

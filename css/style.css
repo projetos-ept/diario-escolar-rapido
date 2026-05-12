@@ -91,6 +91,33 @@ button.perigo{
 }
 
 /* =========================================================
+   BARRA DE BUSCA
+========================================================= */
+.barra-busca{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+    align-items:stretch;
+}
+
+.barra-busca input{
+    flex:1;
+    font-size:16px;
+    padding:14px 16px;
+}
+
+.barra-busca button{
+    width:auto;
+    white-space:nowrap;
+    padding:0 20px;
+    background:#374151;
+}
+
+.barra-busca button.ativo{
+    background:#b45309;
+}
+
+/* =========================================================
    ÁREA JSON
 ========================================================= */
 .json-area{
@@ -276,6 +303,7 @@ th{
     .controls,
     .json-area,
     .painel-impressao,
+    .barra-busca,
     .acoes,
     .btn-remover,
     .btn-remover-atividade{

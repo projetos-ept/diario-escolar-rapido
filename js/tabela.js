@@ -18,6 +18,10 @@ function gerarTabela(){
     tabela.appendChild(gerarTbody());
 
     document.getElementById("tituloTabela").textContent = dados.titulo;
+
+    if(typeof aplicarFiltros === "function"){
+        aplicarFiltros();
+    }
 }
 
 function gerarThead(){
