@@ -62,22 +62,49 @@ function alterarTitulo(){
 }
 
 let filtroSemNotaAtivo = false;
+let filtroAprovacao = "off"; // "off" | "aprovados" | "reprovados"
 
 function configurarBusca(){
     document
         .getElementById("buscaRapida")
         .addEventListener("input", aplicarFiltros);
+
+    document
+        .getElementById("mediaCorte")
+        .addEventListener("input", aplicarFiltros);
+}
+
+function obterMediaCorte(){
+    const v = parseFloat(document.getElementById("mediaCorte").value);
+    return isNaN(v) ? 5.0 : v;
 }
 
 function aplicarFiltros(){
     const termo = document.getElementById("buscaRapida").value.toLowerCase();
+    const corte = obterMediaCorte();
 
     document.querySelectorAll("tbody tr").forEach((linha, row) => {
         const nome = linha.dataset.nome || "";
         const aluno = dados.alunos[row];
+        if(!aluno){
+            linha.style.display = "none";
+            return;
+        }
+
         const casaTermo = nome.includes(termo);
-        const semNota = aluno && aluno.notas.some(n => Number(n) === 0);
-        const passa = casaTermo && (!filtroSemNotaAtivo || semNota);
+        const semNota = aluno.notas.some(n => Number(n) === 0);
+        const total = calcularTotal(aluno);
+        const aprovado = total >= corte;
+
+        let casaAprovacao = true;
+        if(filtroAprovacao === "aprovados") casaAprovacao = aprovado;
+        if(filtroAprovacao === "reprovados") casaAprovacao = !aprovado;
+
+        const passa =
+            casaTermo &&
+            (!filtroSemNotaAtivo || semNota) &&
+            casaAprovacao;
+
         linha.style.display = passa ? "" : "none";
     });
 }
@@ -89,6 +116,27 @@ function alternarFiltroSemNota(){
     btn.textContent = filtroSemNotaAtivo
         ? "Mostrar todos"
         : "Estudantes sem nota";
+    aplicarFiltros();
+}
+
+function alternarFiltroAprovacao(){
+    const ordem = ["off", "aprovados", "reprovados"];
+    const idx = ordem.indexOf(filtroAprovacao);
+    filtroAprovacao = ordem[(idx + 1) % ordem.length];
+
+    const btn = document.getElementById("btnAprovacao");
+    btn.classList.remove("aprovado","reprovado");
+
+    if(filtroAprovacao === "aprovados"){
+        btn.textContent = "Mostrando: Aprovados";
+        btn.classList.add("aprovado");
+    }else if(filtroAprovacao === "reprovados"){
+        btn.textContent = "Mostrando: Reprovados";
+        btn.classList.add("reprovado");
+    }else{
+        btn.textContent = "Filtrar aprovação";
+    }
+
     aplicarFiltros();
 }
 
