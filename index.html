@@ -8,7 +8,13 @@
 </head>
 <body>
 
-<h1 id="tituloTabela">Diário Escolar</h1>
+<header class="cabecalho-planilha">
+    <h1 id="tituloTabela" contenteditable="true" spellcheck="false"
+        title="Clique para editar o título">Diário Rápido</h1>
+    <h2 id="subtituloTabela" contenteditable="true" spellcheck="false"
+        title="Clique para editar o subtítulo">Planilha de Notas</h2>
+    <div class="meta-planilha" id="metaPlanilha"></div>
+</header>
 
 <!-- ===================================================== -->
 <!-- MENU PRINCIPAL                                         -->
@@ -20,15 +26,22 @@
         <button class="btn-menu" data-dropdown>⚙️ Configurações</button>
         <div class="dropdown-content">
             <div class="input-group">
-                <label>Título da Planilha</label>
-                <input type="text" id="tituloInput" placeholder="Novo título">
-                <button class="btn-full" onclick="alterarTitulo()">Alterar título</button>
+                <label>Disciplina</label>
+                <input type="text" id="cfgDisciplina" placeholder="Ex: Matemática">
+            </div>
+            <div class="input-group">
+                <label>Professor</label>
+                <input type="text" id="cfgProfessor" placeholder="Ex: Ana Souza">
             </div>
             <hr>
             <div class="input-group">
                 <label>Média de Aprovação</label>
                 <input type="number" id="mediaCorte" value="5.0" min="0" max="10" step="0.1">
             </div>
+            <hr>
+            <small style="color:#6b7280;font-size:11px;display:block;">
+                Dica: clique no título ou subtítulo na planilha para editá-los.
+            </small>
         </div>
     </div>
 

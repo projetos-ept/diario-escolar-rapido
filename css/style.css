@@ -17,9 +17,80 @@ body{
     padding:15px;
 }
 
-h1{
-    font-size:28px;
+.cabecalho-planilha{
     margin-bottom:18px;
+}
+
+#tituloTabela{
+    font-size:28px;
+    margin:0;
+    line-height:1.15;
+    outline:none;
+    cursor:text;
+    border-radius:4px;
+    padding:2px 4px;
+    transition:background 0.15s;
+    display:inline-block;
+}
+
+#tituloTabela:hover{
+    background:rgba(29,78,216,0.08);
+}
+
+#tituloTabela:focus{
+    background:rgba(29,78,216,0.12);
+    outline:2px solid #1d4ed8;
+}
+
+#subtituloTabela{
+    font-size:14px;
+    font-weight:500;
+    color:#6b7280;
+    margin:2px 0 0 0;
+    outline:none;
+    cursor:text;
+    border-radius:4px;
+    padding:2px 4px;
+    transition:background 0.15s;
+    display:inline-block;
+    letter-spacing:0.3px;
+}
+
+#subtituloTabela:hover{
+    background:rgba(107,114,128,0.1);
+}
+
+#subtituloTabela:focus{
+    background:rgba(29,78,216,0.08);
+    outline:2px solid #1d4ed8;
+    color:#111827;
+}
+
+.meta-planilha{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:8px;
+}
+
+.meta-planilha:empty{
+    display:none;
+}
+
+.meta-planilha .meta{
+    background:#eef2ff;
+    color:#1e3a8a;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+    border:1px solid #c7d2fe;
+}
+
+.meta-planilha .meta-rotulo{
+    font-weight:400;
+    color:#475569;
+    margin-right:4px;
 }
 
 /* =========================================================
@@ -470,9 +541,34 @@ th{
         overflow:visible;
     }
 
-    h1{
+    .cabecalho-planilha{
         margin-bottom:8px;
+    }
+
+    #tituloTabela{
         font-size:16px;
+        padding:0;
+        background:none !important;
+    }
+
+    #subtituloTabela{
+        font-size:10px;
+        padding:0;
+        background:none !important;
+        color:#374151 !important;
+    }
+
+    .meta-planilha{
+        gap:6px;
+        margin-top:4px;
+    }
+
+    .meta-planilha .meta{
+        font-size:9px;
+        padding:2px 6px;
+        background:#eef2ff !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
     }
 
     table{
