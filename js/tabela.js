@@ -28,18 +28,66 @@ function gerarTabela(){
 
 function gerarThead(){
     const thead = document.createElement("thead");
+
+    /* =====================================================
+       LINHA 1 — DATAS
+    ===================================================== */
+    const trDatas = document.createElement("tr");
+    trDatas.classList.add("tr-datas");
+
+    /* célula vazia (Aluno) */
+    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"nome-coluna"}));
+
+    dados.atividades.forEach((_, index) => {
+        const th = document.createElement("th");
+        th.classList.add("th-data");
+
+        const input = document.createElement("input");
+        input.type = "date";
+        input.classList.add("input-data");
+        input.title = "Data da avaliação";
+        input.value = dados.datas[index] || "";
+
+        input.addEventListener("change", () => {
+            dados.datas[index] = input.value;
+            salvarLocalStorage();
+        });
+
+        th.appendChild(input);
+        trDatas.appendChild(th);
+    });
+
+    /* célula vazia (Observações) */
+    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"obs-coluna"}));
+
+    /* total dos valores máximos */
+    const thTotalMax = document.createElement("th");
+    thTotalMax.classList.add("th-total-max");
+    atualizarTotalMax(thTotalMax);
+    trDatas.appendChild(thTotalMax);
+
+    /* célula vazia (Ações) */
+    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"acoes"}));
+
+    thead.appendChild(trDatas);
+
+    /* =====================================================
+       LINHA 2 — NOMES + VALORES
+    ===================================================== */
     const trHead = document.createElement("tr");
 
-    /* Coluna Aluno */
     const thAluno = document.createElement("th");
     thAluno.textContent = "Aluno";
     thAluno.classList.add("nome-coluna");
     trHead.appendChild(thAluno);
 
-    /* Atividades (renomeáveis e removíveis) */
     dados.atividades.forEach((atividade, index) => {
         const th = document.createElement("th");
         th.classList.add("th-editavel");
+
+        /* topo: nome + botão remover */
+        const topo = document.createElement("div");
+        topo.classList.add("th-topo");
 
         const span = document.createElement("span");
         span.contentEditable = "true";
@@ -51,19 +99,12 @@ function gerarThead(){
             span.dataset.original = span.textContent;
             selecionarTudo(span);
         });
-
         span.addEventListener("input", () => {
             const novo = span.textContent.trim();
-            if(novo){
-                dados.atividades[index] = novo;
-                salvarLocalStorage();
-            }
+            if(novo){ dados.atividades[index] = novo; salvarLocalStorage(); }
         });
-
         span.addEventListener("blur", () => {
-            if(!span.textContent.trim()){
-                span.textContent = dados.atividades[index];
-            }
+            if(!span.textContent.trim()) span.textContent = dados.atividades[index];
         });
 
         const btnRemover = document.createElement("button");
@@ -74,37 +115,60 @@ function gerarThead(){
         btnRemover.title = "Remover atividade";
         btnRemover.addEventListener("click", e => {
             e.stopPropagation();
-            const nome = dados.atividades[index];
             if(dados.atividades.length <= 1){
                 alert("É necessário manter pelo menos uma atividade.");
                 return;
             }
-            if(!confirm("Remover a atividade \"" + nome + "\" e apagar todas as suas notas?")){
+            if(!confirm("Remover \"" + dados.atividades[index] + "\" e apagar todas as suas notas?")){
                 return;
             }
             dados.atividades.splice(index, 1);
+            dados.datas.splice(index, 1);
+            dados.valores.splice(index, 1);
             dados.alunos.forEach(a => a.notas.splice(index, 1));
             salvarLocalStorage();
             gerarTabela();
         });
 
-        th.appendChild(span);
-        th.appendChild(btnRemover);
+        topo.appendChild(span);
+        topo.appendChild(btnRemover);
+
+        /* rodapé: valor máximo da avaliação */
+        const inputValor = document.createElement("input");
+        inputValor.type = "text";
+        inputValor.classList.add("th-valor");
+        inputValor.placeholder = "0.0";
+        inputValor.title = "Pontuação máxima";
+        inputValor.value = Number(dados.valores[index] || 0).toFixed(1);
+
+        inputValor.addEventListener("focus", () => inputValor.select());
+        inputValor.addEventListener("blur", () => {
+            const v = normalizarNota(inputValor.value);
+            dados.valores[index] = v;
+            inputValor.value = v.toFixed(1);
+            salvarLocalStorage();
+            /* atualiza total máx sem rebuild */
+            const thMax = document.querySelector(".th-total-max");
+            if(thMax) atualizarTotalMax(thMax);
+        });
+        inputValor.addEventListener("keydown", e => {
+            if(e.key === "Enter" || e.key === "Escape") inputValor.blur();
+        });
+
+        th.appendChild(topo);
+        th.appendChild(inputValor);
         trHead.appendChild(th);
     });
 
-    /* Observações */
     const thObs = document.createElement("th");
     thObs.textContent = "Observações";
     thObs.classList.add("obs-coluna");
     trHead.appendChild(thObs);
 
-    /* Somatória */
     const thTotal = document.createElement("th");
     thTotal.textContent = "Somatória";
     trHead.appendChild(thTotal);
 
-    /* Ações */
     const thAcoes = document.createElement("th");
     thAcoes.textContent = "Ações";
     thAcoes.classList.add("acoes");
@@ -112,6 +176,11 @@ function gerarThead(){
 
     thead.appendChild(trHead);
     return thead;
+}
+
+function atualizarTotalMax(el){
+    const soma = (dados.valores || []).reduce((a,b) => a + Number(b||0), 0);
+    el.textContent = soma > 0 ? soma.toFixed(1) : "";
 }
 
 function gerarTbody(){

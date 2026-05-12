@@ -351,6 +351,47 @@ th{
 }
 
 /* =========================================================
+   LINHA DE DATAS
+========================================================= */
+.tr-datas th{
+    background:#1e3a8a;
+    padding:4px 6px;
+}
+
+.th-data{
+    text-align:center;
+}
+
+.input-data{
+    width:100%;
+    min-width:120px;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:4px;
+    color:#ffffff;
+    font-size:11px;
+    padding:3px 4px;
+    text-align:center;
+    cursor:pointer;
+    color-scheme:dark;
+}
+
+.input-data:focus{
+    outline:2px solid #fbbf24;
+    border-color:#fbbf24;
+}
+
+/* célula com o total dos valores máximos */
+.th-total-max{
+    background:#1e3a8a;
+    color:#fbbf24;
+    font-weight:bold;
+    font-size:13px;
+    text-align:center;
+    min-width:80px;
+}
+
+/* =========================================================
    CABEÇALHO EDITÁVEL
    (texto sempre branco, fundo azul permanente)
 ========================================================= */
@@ -358,6 +399,16 @@ th{
     background:#1d4ed8 !important;
     color:#ffffff !important;
     caret-color:#ffffff;
+    vertical-align:top;
+    padding:0 !important;
+}
+
+.th-topo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    padding:6px 6px 4px;
     white-space:nowrap;
 }
 
@@ -372,13 +423,37 @@ th{
     border-radius:3px;
 }
 
+.th-valor{
+    display:block;
+    width:100%;
+    background:rgba(255,255,255,0.15);
+    border:none;
+    border-top:1px solid rgba(255,255,255,0.25);
+    color:#ffffff;
+    font-size:12px;
+    font-weight:bold;
+    text-align:center;
+    padding:3px 4px;
+    cursor:text;
+    box-sizing:border-box;
+    min-width:0;
+}
+
+.th-valor:focus{
+    background:rgba(255,255,255,0.25);
+    outline:2px solid #fbbf24;
+}
+
+.th-valor::placeholder{
+    color:rgba(255,255,255,0.4);
+}
+
 .btn-remover-atividade{
     background:transparent;
     color:#fbbf24;
     border:none;
     width:auto;
     padding:0 4px;
-    margin-left:4px;
     cursor:pointer;
     font-size:14px;
     font-weight:bold;
@@ -595,6 +670,30 @@ th{
         background:#dbeafe !important;
         -webkit-print-color-adjust:exact;
         print-color-adjust:exact;
+    }
+
+    .tr-datas th,
+    .th-total-max{
+        background:#1e3a8a !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+
+    .input-data{
+        border:none;
+        background:transparent;
+        pointer-events:none;
+        font-size:9px;
+        color:#ffffff !important;
+        /* datas vazias ficam invisíveis automaticamente */
+    }
+
+    .th-valor{
+        background:rgba(255,255,255,0.15) !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+        font-size:8px;
+        pointer-events:none;
     }
 
     .rodape-estatisticas{
