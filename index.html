@@ -24,7 +24,6 @@
     <input type="text" id="novaAtividade" placeholder="Nova atividade">
     <button onclick="adicionarAtividade()">Adicionar atividade</button>
 
-    <input type="text" id="buscaRapida" placeholder="Busca rápida">
     <button onclick="imprimirA4()">Imprimir A4</button>
 
     <button onclick="exportarJSON()">Exportar JSON</button>
@@ -84,6 +83,16 @@
 <button onclick="importarJSONColado()" style="margin-top:10px;">
     Importar JSON Colado
 </button>
+</div>
+
+<!-- ===================================================== -->
+<!-- BUSCA + FILTROS                                        -->
+<!-- ===================================================== -->
+<div class="barra-busca">
+    <input type="text" id="buscaRapida" placeholder="Busca rápida por nome do aluno…">
+    <button id="btnSemNota" onclick="alternarFiltroSemNota()">
+        Estudantes sem nota
+    </button>
 </div>
 
 <!-- ===================================================== -->
