@@ -23,13 +23,141 @@ h1{
 }
 
 /* =========================================================
-   CONTROLES
+   MENU PRINCIPAL (DROPDOWNS)
 ========================================================= */
-.controls{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:10px;
+.menu-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    background:#ffffff;
+    padding:12px;
+    border-bottom:2px solid #1d4ed8;
+    border-radius:8px;
     margin-bottom:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+.dropdown{
+    position:relative;
+    display:inline-block;
+}
+
+.btn-menu{
+    background-color:#1d4ed8;
+    color:white;
+    padding:10px 16px;
+    border:none;
+    cursor:pointer;
+    border-radius:6px;
+    font-weight:600;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:auto;
+}
+
+.btn-menu:hover{
+    background-color:#1e40af;
+}
+
+.dropdown.aberto > .btn-menu{
+    background-color:#1e3a8a;
+}
+
+.dropdown-content{
+    display:none;
+    position:absolute;
+    background-color:white;
+    min-width:280px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    z-index:1000;
+    padding:15px;
+    border-radius:8px;
+    top:calc(100% + 6px);
+    left:0;
+}
+
+.dropdown.aberto > .dropdown-content{
+    display:block;
+}
+
+.dropdown-content .input-group{
+    margin-bottom:10px;
+}
+
+.dropdown-content .input-group:last-child{
+    margin-bottom:0;
+}
+
+.dropdown-content label{
+    display:block;
+    font-size:0.85rem;
+    color:#444;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+.dropdown-content .label-inline{
+    font-weight:normal;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.dropdown-content .label-inline input[type="checkbox"]{
+    width:auto;
+    margin:0;
+}
+
+.dropdown-content input,
+.dropdown-content select,
+.dropdown-content textarea{
+    width:100%;
+    padding:8px;
+    border:1px solid #ddd;
+    border-radius:4px;
+    font-size:13px;
+    box-sizing:border-box;
+}
+
+.dropdown-content textarea{
+    min-height:80px;
+    resize:vertical;
+}
+
+.dropdown-content hr{
+    border:0;
+    border-top:1px solid #eee;
+    margin:10px 0;
+}
+
+.btn-full{
+    width:100%;
+    background:#eef2ff;
+    border:1px solid #1d4ed8;
+    color:#1d4ed8;
+    padding:8px;
+    border-radius:4px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:5px;
+    font-size:13px;
+}
+
+.btn-full:hover{
+    background:#1d4ed8;
+    color:white;
+}
+
+.btn-full.primario{
+    background:#1d4ed8;
+    color:white;
+}
+
+.btn-full.primario:hover{
+    background:#1e40af;
 }
 
 input,
@@ -70,27 +198,6 @@ button.perigo{
 }
 
 /* =========================================================
-   PAINEL DE IMPRESSÃO
-========================================================= */
-.painel-impressao{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:10px;
-    background:#eef2ff;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:15px;
-}
-
-.painel-impressao label{
-    display:flex;
-    flex-direction:column;
-    font-size:12px;
-    color:#374151;
-    gap:4px;
-}
-
-/* =========================================================
    BARRA DE BUSCA
 ========================================================= */
 .barra-busca{
@@ -123,39 +230,6 @@ button.perigo{
 
 .barra-busca button.reprovado{
     background:#b91c1c;
-}
-
-.campo-media{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    background:white;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    padding:0 10px;
-    font-size:13px;
-    color:#374151;
-    white-space:nowrap;
-}
-
-.campo-media input{
-    width:70px;
-    border:none;
-    padding:10px 0;
-    font-size:16px;
-    font-weight:bold;
-    text-align:center;
-}
-
-.campo-media input:focus{
-    outline:none;
-}
-
-/* =========================================================
-   ÁREA JSON
-========================================================= */
-.json-area{
-    margin-bottom:15px;
 }
 
 /* =========================================================
@@ -381,9 +455,7 @@ th{
         background:white;
     }
 
-    .controls,
-    .json-area,
-    .painel-impressao,
+    .menu-container,
     .barra-busca,
     .acoes,
     .btn-remover,

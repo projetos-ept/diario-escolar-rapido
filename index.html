@@ -11,78 +11,102 @@
 <h1 id="tituloTabela">Diário Escolar</h1>
 
 <!-- ===================================================== -->
-<!-- CONTROLES                                              -->
+<!-- MENU PRINCIPAL                                         -->
 <!-- ===================================================== -->
-<div class="controls">
+<div class="menu-container" id="menuPrincipal">
 
-    <input type="text" id="tituloInput" placeholder="Novo título">
-    <button onclick="alterarTitulo()">Alterar título</button>
+    <!-- 1. CONFIGURAÇÕES -->
+    <div class="dropdown">
+        <button class="btn-menu" data-dropdown>⚙️ Configurações</button>
+        <div class="dropdown-content">
+            <div class="input-group">
+                <label>Título da Planilha</label>
+                <input type="text" id="tituloInput" placeholder="Novo título">
+                <button class="btn-full" onclick="alterarTitulo()">Alterar título</button>
+            </div>
+            <hr>
+            <div class="input-group">
+                <label>Média de Aprovação</label>
+                <input type="number" id="mediaCorte" value="5.0" min="0" max="10" step="0.1">
+            </div>
+        </div>
+    </div>
 
-    <input type="text" id="novoAluno" placeholder="Novo aluno">
-    <button onclick="adicionarAluno()">Adicionar aluno</button>
+    <!-- 2. IMPRESSÃO -->
+    <div class="dropdown">
+        <button class="btn-menu" data-dropdown>🖨️ Impressão</button>
+        <div class="dropdown-content">
+            <div class="input-group">
+                <label>Orientação</label>
+                <select id="cfgOrientacao">
+                    <option value="landscape">A4 Paisagem</option>
+                    <option value="portrait">A4 Retrato</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Margem</label>
+                <select id="cfgMargem">
+                    <option value="5mm">5 mm</option>
+                    <option value="8mm">8 mm</option>
+                    <option value="12mm">12 mm</option>
+                    <option value="20mm">20 mm</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="label-inline">
+                    <input type="checkbox" id="cfgMostrarObs">
+                    Incluir Observações na impressão
+                </label>
+            </div>
+            <button class="btn-full primario" onclick="imprimirA4()">Imprimir A4</button>
+        </div>
+    </div>
 
-    <input type="text" id="novaAtividade" placeholder="Nova atividade">
-    <button onclick="adicionarAtividade()">Adicionar atividade</button>
+    <!-- 3. AÇÕES RÁPIDAS -->
+    <div class="dropdown">
+        <button class="btn-menu" data-dropdown>⚡ Ações Rápidas</button>
+        <div class="dropdown-content">
+            <div class="input-group">
+                <label>Novo Aluno</label>
+                <input type="text" id="novoAluno" placeholder="Nome completo">
+                <button class="btn-full primario" onclick="adicionarAluno()">Adicionar</button>
+            </div>
+            <hr>
+            <div class="input-group">
+                <label>Nova Atividade</label>
+                <input type="text" id="novaAtividade" placeholder="Ex: P1, Trabalho…">
+                <button class="btn-full primario" onclick="adicionarAtividade()">Adicionar</button>
+            </div>
+            <hr>
+            <div class="input-group">
+                <label>Adição em Massa de Alunos</label>
+                <textarea id="alunosEmMassa"
+                    placeholder="Um nome por linha:&#10;Ana&#10;Carlos&#10;Marina"></textarea>
+                <button class="btn-full primario" onclick="adicionarAlunosEmMassa()">Adicionar em massa</button>
+            </div>
+        </div>
+    </div>
 
-    <button onclick="imprimirA4()">Imprimir A4</button>
+    <!-- 4. ARQUIVOS -->
+    <div class="dropdown">
+        <button class="btn-menu" data-dropdown>💾 Arquivos</button>
+        <div class="dropdown-content">
+            <button class="btn-full primario" onclick="exportarJSONTotal()">Exportar (.json)</button>
+            <hr>
+            <div class="input-group">
+                <label>Importar Backup</label>
+                <input type="file" id="importarArquivo">
+                <button class="btn-full" onclick="importarArquivoJSON()">Importar Arquivo</button>
+            </div>
+            <hr>
+            <div class="input-group">
+                <label>Importar JSON Colado</label>
+                <textarea id="jsonPaste" placeholder="Cole o JSON aqui"></textarea>
+                <button class="btn-full" onclick="importarJSONColado()">Importar Colado</button>
+            </div>
+        </div>
+    </div>
 
-    <button onclick="exportarJSON()">Exportar JSON</button>
-    <button onclick="exportarJSONTotal()">Exportar Total JSON</button>
-
-    <input type="file" id="importarArquivo">
-    <button onclick="importarArquivoJSON()">Importar Arquivo JSON</button>
-
-</div>
-
-<!-- ===================================================== -->
-<!-- ADIÇÃO EM MASSA                                        -->
-<!-- ===================================================== -->
-<div class="json-area">
-<textarea id="alunosEmMassa"
-    placeholder="Adição em massa de alunos — um nome por linha:&#10;Ana&#10;Carlos&#10;Marina"></textarea>
-<button onclick="adicionarAlunosEmMassa()" style="margin-top:10px;">
-    Adicionar alunos em massa
-</button>
-</div>
-
-<!-- ===================================================== -->
-<!-- PAINEL DE IMPRESSÃO                                    -->
-<!-- ===================================================== -->
-<div class="painel-impressao">
-
-    <label>
-        Orientação
-        <select id="cfgOrientacao">
-            <option value="landscape">A4 Paisagem</option>
-            <option value="portrait">A4 Retrato</option>
-        </select>
-    </label>
-
-    <label>
-        Margem
-        <select id="cfgMargem">
-            <option value="5mm">5 mm</option>
-            <option value="8mm">8 mm</option>
-            <option value="12mm">12 mm</option>
-            <option value="20mm">20 mm</option>
-        </select>
-    </label>
-
-    <label style="flex-direction:row;align-items:center;gap:8px;">
-        <input type="checkbox" id="cfgMostrarObs" style="width:auto;">
-        Mostrar Observações na impressão
-    </label>
-
-</div>
-
-<!-- ===================================================== -->
-<!-- JSON COLADO                                            -->
-<!-- ===================================================== -->
-<div class="json-area">
-<textarea id="jsonPaste" placeholder="Cole o JSON aqui"></textarea>
-<button onclick="importarJSONColado()" style="margin-top:10px;">
-    Importar JSON Colado
-</button>
 </div>
 
 <!-- ===================================================== -->
@@ -90,11 +114,6 @@
 <!-- ===================================================== -->
 <div class="barra-busca">
     <input type="text" id="buscaRapida" placeholder="Busca rápida por nome do aluno…">
-
-    <label class="campo-media">
-        Média
-        <input type="number" id="mediaCorte" value="5.0" min="0" max="10" step="0.1">
-    </label>
 
     <button id="btnAprovacao" onclick="alternarFiltroAprovacao()">
         Filtrar aprovação
