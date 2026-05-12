@@ -53,12 +53,101 @@ function adicionarAtividade(){
     gerarTabela();
 }
 
-function alterarTitulo(){
-    const titulo = document.getElementById("tituloInput").value.trim();
-    if(!titulo) return;
-    dados.titulo = titulo;
-    salvarLocalStorage();
-    gerarTabela();
+function atualizarCabecalho(){
+    const tit = document.getElementById("tituloTabela");
+    const sub = document.getElementById("subtituloTabela");
+    const meta = document.getElementById("metaPlanilha");
+
+    if(document.activeElement !== tit){
+        tit.textContent = dados.titulo || "Diário Rápido";
+    }
+    if(document.activeElement !== sub){
+        sub.textContent = dados.subtitulo || "Planilha de Notas";
+    }
+
+    meta.innerHTML = "";
+    if(dados.disciplina && dados.disciplina.trim()){
+        meta.appendChild(criarMeta("Disciplina", dados.disciplina));
+    }
+    if(dados.professor && dados.professor.trim()){
+        meta.appendChild(criarMeta("Professor", dados.professor));
+    }
+
+    const disc = document.getElementById("cfgDisciplina");
+    const prof = document.getElementById("cfgProfessor");
+    if(disc && document.activeElement !== disc) disc.value = dados.disciplina || "";
+    if(prof && document.activeElement !== prof) prof.value = dados.professor || "";
+}
+
+function criarMeta(rotulo, valor){
+    const span = document.createElement("span");
+    span.classList.add("meta");
+    const r = document.createElement("span");
+    r.classList.add("meta-rotulo");
+    r.textContent = rotulo + ":";
+    span.appendChild(r);
+    span.appendChild(document.createTextNode(" " + valor));
+    return span;
+}
+
+function configurarCabecalhoEditavel(){
+    const tit = document.getElementById("tituloTabela");
+    const sub = document.getElementById("subtituloTabela");
+
+    const ligarEdicao = (el, chave, padrao) => {
+        el.addEventListener("input", () => {
+            dados[chave] = el.textContent;
+            salvarLocalStorage();
+        });
+
+        el.addEventListener("blur", () => {
+            const txt = el.textContent.trim();
+            dados[chave] = txt || padrao;
+            el.textContent = dados[chave];
+            salvarLocalStorage();
+        });
+
+        el.addEventListener("keydown", e => {
+            if(e.key === "Enter"){
+                e.preventDefault();
+                el.blur();
+            }
+            if(e.key === "Escape"){
+                el.textContent = dados[chave] || padrao;
+                el.blur();
+            }
+        });
+
+        el.addEventListener("paste", e => {
+            e.preventDefault();
+            const txt = (e.clipboardData || window.clipboardData)
+                .getData("text").replace(/\r?\n/g, " ");
+            document.execCommand("insertText", false, txt);
+        });
+    };
+
+    ligarEdicao(tit, "titulo", "Diário Rápido");
+    ligarEdicao(sub, "subtitulo", "Planilha de Notas");
+}
+
+function configurarMetadados(){
+    const disc = document.getElementById("cfgDisciplina");
+    const prof = document.getElementById("cfgProfessor");
+
+    disc.value = dados.disciplina || "";
+    prof.value = dados.professor || "";
+
+    disc.addEventListener("input", () => {
+        dados.disciplina = disc.value;
+        salvarLocalStorage();
+        atualizarCabecalho();
+    });
+
+    prof.addEventListener("input", () => {
+        dados.professor = prof.value;
+        salvarLocalStorage();
+        atualizarCabecalho();
+    });
 }
 
 let filtroSemNotaAtivo = false;
@@ -204,6 +293,8 @@ function smokeTests(){
 ========================================================= */
 function init(){
     carregarLocalStorage();
+    configurarCabecalhoEditavel();
+    configurarMetadados();
     gerarTabela();
     configurarBusca();
     configurarPainelImpressao();

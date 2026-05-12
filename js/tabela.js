@@ -17,7 +17,9 @@ function gerarTabela(){
     tabela.appendChild(gerarThead());
     tabela.appendChild(gerarTbody());
 
-    document.getElementById("tituloTabela").textContent = dados.titulo;
+    if(typeof atualizarCabecalho === "function"){
+        atualizarCabecalho();
+    }
 
     if(typeof aplicarFiltros === "function"){
         aplicarFiltros();

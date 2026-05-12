@@ -6,7 +6,10 @@
 const STORAGE_KEY = "diarioEscolarInteligente";
 
 const dadosPadrao = () => ({
-    titulo:"Diário Escolar",
+    titulo:"Diário Rápido",
+    subtitulo:"Planilha de Notas",
+    disciplina:"",
+    professor:"",
     atividades:["P1","P2","P3"],
     alunos:[],
     config:{
@@ -50,6 +53,10 @@ function migrar(obj){
             ...(obj.config || {})
         }
     };
+
+    if(typeof out.subtitulo !== "string") out.subtitulo = base.subtitulo;
+    if(typeof out.disciplina !== "string") out.disciplina = "";
+    if(typeof out.professor !== "string") out.professor = "";
 
     if(!Array.isArray(out.atividades) || out.atividades.length === 0){
         out.atividades = ["P1","P2","P3"];
