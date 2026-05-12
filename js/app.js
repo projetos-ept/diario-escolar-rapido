@@ -74,6 +74,40 @@ function configurarBusca(){
         .addEventListener("input", aplicarFiltros);
 }
 
+function configurarMenu(){
+    const botoes = document.querySelectorAll("[data-dropdown]");
+
+    botoes.forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.stopPropagation();
+            const dropdown = btn.parentElement;
+            const jaAberto = dropdown.classList.contains("aberto");
+
+            document
+                .querySelectorAll(".dropdown.aberto")
+                .forEach(d => d.classList.remove("aberto"));
+
+            if(!jaAberto) dropdown.classList.add("aberto");
+        });
+    });
+
+    document.addEventListener("click", e => {
+        if(!e.target.closest(".dropdown")){
+            document
+                .querySelectorAll(".dropdown.aberto")
+                .forEach(d => d.classList.remove("aberto"));
+        }
+    });
+
+    document.addEventListener("keydown", e => {
+        if(e.key === "Escape"){
+            document
+                .querySelectorAll(".dropdown.aberto")
+                .forEach(d => d.classList.remove("aberto"));
+        }
+    });
+}
+
 function obterMediaCorte(){
     const v = parseFloat(document.getElementById("mediaCorte").value);
     return isNaN(v) ? 5.0 : v;
@@ -173,6 +207,7 @@ function init(){
     gerarTabela();
     configurarBusca();
     configurarPainelImpressao();
+    configurarMenu();
     smokeTests();
 }
 
