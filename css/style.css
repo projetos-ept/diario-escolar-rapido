@@ -117,6 +117,40 @@ button.perigo{
     background:#b45309;
 }
 
+.barra-busca button.aprovado{
+    background:#15803d;
+}
+
+.barra-busca button.reprovado{
+    background:#b91c1c;
+}
+
+.campo-media{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:white;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    padding:0 10px;
+    font-size:13px;
+    color:#374151;
+    white-space:nowrap;
+}
+
+.campo-media input{
+    width:70px;
+    border:none;
+    padding:10px 0;
+    font-size:16px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.campo-media input:focus{
+    outline:none;
+}
+
 /* =========================================================
    ÁREA JSON
 ========================================================= */
