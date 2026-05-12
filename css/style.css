@@ -290,6 +290,53 @@ th{
 }
 
 /* =========================================================
+   RODAPÉ DE ESTATÍSTICAS
+========================================================= */
+.rodape-estatisticas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:15px;
+    padding:12px 15px;
+    background:white;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    font-size:14px;
+}
+
+.estat{
+    padding:6px 12px;
+    border-radius:6px;
+    background:#f3f4f6;
+    color:#111827;
+}
+
+.estat strong{
+    font-size:16px;
+    margin-left:6px;
+}
+
+.estat-aprovados{
+    background:#dcfce7;
+    color:#14532d;
+}
+
+.estat-reprovados{
+    background:#fee2e2;
+    color:#7f1d1d;
+}
+
+.estat-total{
+    background:#dbeafe;
+    color:#1e3a8a;
+}
+
+.estat-media-corte{
+    background:#fef3c7;
+    color:#78350f;
+}
+
+/* =========================================================
    AUTO-AJUSTE PARA MUITAS COLUNAS
 ========================================================= */
 .compacto th,
@@ -380,6 +427,28 @@ th{
         background:#dbeafe !important;
         -webkit-print-color-adjust:exact;
         print-color-adjust:exact;
+    }
+
+    .rodape-estatisticas{
+        box-shadow:none;
+        padding:6px 0;
+        margin-top:8px;
+        font-size:10px;
+        gap:6px;
+    }
+
+    .estat,
+    .estat-aprovados,
+    .estat-reprovados,
+    .estat-total,
+    .estat-media-corte{
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+        padding:3px 6px;
+    }
+
+    .estat strong{
+        font-size:11px;
     }
 
     /* Sem coluna de observações na impressão compacta */

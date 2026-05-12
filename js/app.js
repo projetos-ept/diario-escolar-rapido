@@ -79,9 +79,27 @@ function obterMediaCorte(){
     return isNaN(v) ? 5.0 : v;
 }
 
+function atualizarEstatisticas(){
+    const corte = obterMediaCorte();
+    let aprovados = 0;
+    let reprovados = 0;
+
+    dados.alunos.forEach(a => {
+        const total = calcularTotal(a);
+        if(total >= corte) aprovados++;
+        else reprovados++;
+    });
+
+    document.getElementById("estatTotal").textContent = dados.alunos.length;
+    document.getElementById("estatAprovados").textContent = aprovados;
+    document.getElementById("estatReprovados").textContent = reprovados;
+    document.getElementById("estatCorte").textContent = corte.toFixed(1);
+}
+
 function aplicarFiltros(){
     const termo = document.getElementById("buscaRapida").value.toLowerCase();
     const corte = obterMediaCorte();
+    atualizarEstatisticas();
 
     document.querySelectorAll("tbody tr").forEach((linha, row) => {
         const nome = linha.dataset.nome || "";
