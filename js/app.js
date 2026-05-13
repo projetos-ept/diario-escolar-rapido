@@ -205,26 +205,40 @@ function obterMediaCorte(){
 }
 
 function atualizarEstatisticas(){
-    const elTotal = document.getElementById("estatTotal");
-    const elAprov = document.getElementById("estatAprovados");
-    const elRepr = document.getElementById("estatReprovados");
-    const elCorte = document.getElementById("estatCorte");
-    if(!elTotal || !elAprov || !elRepr || !elCorte) return;
-
     const corte = obterMediaCorte();
     let aprovados = 0;
     let reprovados = 0;
+    let somaTotais = 0;
 
     dados.alunos.forEach(a => {
         const total = calcularTotal(a);
+        somaTotais += total;
         if(total >= corte) aprovados++;
         else reprovados++;
     });
 
-    elTotal.textContent = dados.alunos.length;
-    elAprov.textContent = aprovados;
-    elRepr.textContent = reprovados;
-    elCorte.textContent = corte.toFixed(1);
+    const totalAlunos = dados.alunos.length;
+    const mediaTurma = totalAlunos > 0
+        ? Number((somaTotais / totalAlunos).toFixed(1))
+        : 0;
+
+    const aplicar = (id, valor) => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = valor;
+    };
+
+    /* rodapé */
+    aplicar("estatTotal", totalAlunos);
+    aplicar("estatAprovados", aprovados);
+    aplicar("estatReprovados", reprovados);
+    aplicar("estatMediaTurma", mediaTurma.toFixed(1));
+    aplicar("estatCorte", corte.toFixed(1));
+
+    /* topo */
+    aplicar("estatTotalTopo", totalAlunos);
+    aplicar("estatAprovadosTopo", aprovados);
+    aplicar("estatReprovadosTopo", reprovados);
+    aplicar("estatMediaTurmaTopo", mediaTurma.toFixed(1));
 }
 
 /* =========================================================

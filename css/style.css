@@ -651,6 +651,79 @@ th{
     color:#78350f;
 }
 
+.estat-media-turma{
+    background:#ede9fe;
+    color:#4c1d95;
+}
+
+/* =========================================================
+   ESTATÍSTICAS NO TOPO (espelho do rodapé)
+========================================================= */
+.estatisticas-topo{
+    display:flex;
+    gap:8px;
+    margin-left:auto;
+    align-items:stretch;
+    flex-wrap:wrap;
+}
+
+.estat-mini{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:6px 16px;
+    border-radius:8px;
+    min-width:84px;
+    text-align:center;
+    border:1px solid transparent;
+    transition:transform 0.15s;
+}
+
+.estat-mini:hover{
+    transform:translateY(-1px);
+}
+
+.estat-mini .estat-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    font-weight:700;
+    opacity:0.75;
+    margin-bottom:2px;
+}
+
+.estat-mini .estat-valor{
+    font-size:22px;
+    font-weight:bold;
+    line-height:1.1;
+    font-variant-numeric:tabular-nums;
+}
+
+.estat-mini.estat-total{
+    background:#dbeafe;
+    color:#1e3a8a;
+    border-color:#bfdbfe;
+}
+
+.estat-mini.estat-aprovados{
+    background:#dcfce7;
+    color:#14532d;
+    border-color:#bbf7d0;
+}
+
+.estat-mini.estat-reprovados{
+    background:#fee2e2;
+    color:#7f1d1d;
+    border-color:#fecaca;
+}
+
+.estat-mini.estat-media-turma{
+    background:#ede9fe;
+    color:#4c1d95;
+    border-color:#ddd6fe;
+}
+
 /* =========================================================
    AUTO-AJUSTE PARA MUITAS COLUNAS
 ========================================================= */
