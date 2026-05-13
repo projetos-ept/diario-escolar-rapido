@@ -46,6 +46,8 @@ function adicionarAtividade(){
     if(!atividade) return;
 
     dados.atividades.push(atividade);
+    dados.datas.push("");
+    dados.valores.push(0);
     dados.alunos.forEach(a => a.notas.push(0));
 
     campo.value = "";
