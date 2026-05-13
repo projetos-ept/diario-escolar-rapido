@@ -138,6 +138,18 @@
 </div>
 
 <!-- ===================================================== -->
+<!-- BARRA DE AÇÕES DE SELEÇÃO                              -->
+<!-- ===================================================== -->
+<div class="barra-acoes-selecao" id="barraAcoesSelecao" hidden>
+    <span class="contador-selecao">
+        <strong id="contadorSelecao">0</strong> aluno(s) selecionado(s)
+    </span>
+    <button onclick="imprimirSelecionados()">🖨️ Imprimir selecionados</button>
+    <button class="perigo" onclick="excluirSelecionados()">🗑️ Excluir selecionados</button>
+    <button class="secundario" onclick="limparSelecao()">Limpar seleção</button>
+</div>
+
+<!-- ===================================================== -->
 <!-- TABELA                                                 -->
 <!-- ===================================================== -->
 <div class="container">

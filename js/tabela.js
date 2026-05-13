@@ -2,9 +2,16 @@
    TABELA — render + interações de células
 ========================================================= */
 
+const selecionados = new Set();
+
 function gerarTabela(){
     const tabela = document.getElementById("tabela");
     tabela.innerHTML = "";
+
+    /* limpa seleções de índices que não existem mais */
+    Array.from(selecionados).forEach(idx => {
+        if(idx >= dados.alunos.length) selecionados.delete(idx);
+    });
 
     /* Auto-ajuste para muitas colunas */
     const totalCols = dados.atividades.length;
@@ -17,13 +24,9 @@ function gerarTabela(){
     tabela.appendChild(gerarThead());
     tabela.appendChild(gerarTbody());
 
-    if(typeof atualizarCabecalho === "function"){
-        atualizarCabecalho();
-    }
-
-    if(typeof aplicarFiltros === "function"){
-        aplicarFiltros();
-    }
+    if(typeof atualizarCabecalho === "function") atualizarCabecalho();
+    if(typeof aplicarFiltros === "function") aplicarFiltros();
+    atualizarBarraSelecao();
 }
 
 function gerarThead(){
@@ -35,8 +38,12 @@ function gerarThead(){
     const trDatas = document.createElement("tr");
     trDatas.classList.add("tr-datas");
 
-    /* célula vazia (Aluno) */
-    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"nome-coluna"}));
+    /* célula vazia (checkbox + Aluno) */
+    const thVazioSel = document.createElement("th");
+    thVazioSel.classList.add("col-selecao");
+    trDatas.appendChild(thVazioSel);
+
+    trDatas.appendChild(Object.assign(document.createElement("th"), { className:"nome-coluna" }));
 
     dados.atividades.forEach((_, index) => {
         const th = document.createElement("th");
@@ -57,17 +64,10 @@ function gerarThead(){
         trDatas.appendChild(th);
     });
 
-    /* célula vazia (Observações) */
-    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"obs-coluna"}));
-
-    /* total dos valores máximos */
-    const thTotalMax = document.createElement("th");
-    thTotalMax.classList.add("th-total-max");
-    atualizarTotalMax(thTotalMax);
-    trDatas.appendChild(thTotalMax);
-
-    /* célula vazia (Ações) */
-    trDatas.appendChild(Object.assign(document.createElement("th"), {className:"acoes"}));
+    /* Observações, Somatória, Ações ficam vazios na linha de datas */
+    trDatas.appendChild(Object.assign(document.createElement("th"), { className:"obs-coluna" }));
+    trDatas.appendChild(Object.assign(document.createElement("th"), {}));
+    trDatas.appendChild(Object.assign(document.createElement("th"), { className:"acoes" }));
 
     thead.appendChild(trDatas);
 
@@ -75,6 +75,27 @@ function gerarThead(){
        LINHA 2 — NOMES + VALORES
     ===================================================== */
     const trHead = document.createElement("tr");
+
+    /* checkbox "selecionar todos" */
+    const thSelTodos = document.createElement("th");
+    thSelTodos.classList.add("col-selecao");
+    const chkTodos = document.createElement("input");
+    chkTodos.type = "checkbox";
+    chkTodos.id = "chkSelecionarTodos";
+    chkTodos.title = "Selecionar todos os visíveis";
+    chkTodos.addEventListener("change", () => {
+        document.querySelectorAll("tbody tr").forEach((tr, row) => {
+            if(tr.style.display === "none") return;
+            const chk = tr.querySelector(".chk-aluno");
+            if(!chk) return;
+            chk.checked = chkTodos.checked;
+            if(chkTodos.checked) selecionados.add(row);
+            else selecionados.delete(row);
+        });
+        atualizarBarraSelecao();
+    });
+    thSelTodos.appendChild(chkTodos);
+    trHead.appendChild(thSelTodos);
 
     const thAluno = document.createElement("th");
     thAluno.textContent = "Aluno";
@@ -85,7 +106,6 @@ function gerarThead(){
         const th = document.createElement("th");
         th.classList.add("th-editavel");
 
-        /* topo: nome + botão remover */
         const topo = document.createElement("div");
         topo.classList.add("th-topo");
 
@@ -133,23 +153,22 @@ function gerarThead(){
         topo.appendChild(span);
         topo.appendChild(btnRemover);
 
-        /* rodapé: valor máximo da avaliação */
         const inputValor = document.createElement("input");
         inputValor.type = "text";
         inputValor.classList.add("th-valor");
         inputValor.placeholder = "0.0";
-        inputValor.title = "Pontuação máxima";
+        inputValor.title = "Pontuação máxima da avaliação";
         inputValor.value = Number(dados.valores[index] || 0).toFixed(1);
 
         inputValor.addEventListener("focus", () => inputValor.select());
         inputValor.addEventListener("blur", () => {
             const v = normalizarNota(inputValor.value);
-            dados.valores[index] = v;
-            inputValor.value = v.toFixed(1);
+            const num = ehAusente(v) ? 0 : v;
+            dados.valores[index] = num;
+            inputValor.value = Number(num).toFixed(1);
             salvarLocalStorage();
-            /* atualiza total máx sem rebuild */
-            const thMax = document.querySelector(".th-total-max");
-            if(thMax) atualizarTotalMax(thMax);
+            const elTotalMax = document.querySelector(".th-total-max-valor");
+            if(elTotalMax) atualizarTotalMax(elTotalMax);
         });
         inputValor.addEventListener("keydown", e => {
             if(e.key === "Enter" || e.key === "Escape") inputValor.blur();
@@ -165,8 +184,19 @@ function gerarThead(){
     thObs.classList.add("obs-coluna");
     trHead.appendChild(thObs);
 
+    /* Somatória — agora com total máximo abaixo, no mesmo padrão das avaliações */
     const thTotal = document.createElement("th");
-    thTotal.textContent = "Somatória";
+    thTotal.classList.add("th-somatoria");
+
+    const topoSom = document.createElement("div");
+    topoSom.classList.add("th-topo");
+    topoSom.textContent = "Somatória";
+    thTotal.appendChild(topoSom);
+
+    const totalMaxBox = document.createElement("div");
+    totalMaxBox.classList.add("th-total-max-valor");
+    atualizarTotalMax(totalMaxBox);
+    thTotal.appendChild(totalMaxBox);
     trHead.appendChild(thTotal);
 
     const thAcoes = document.createElement("th");
@@ -180,7 +210,7 @@ function gerarThead(){
 
 function atualizarTotalMax(el){
     const soma = (dados.valores || []).reduce((a,b) => a + Number(b||0), 0);
-    el.textContent = soma > 0 ? soma.toFixed(1) : "";
+    el.textContent = soma > 0 ? soma.toFixed(1) : "—";
 }
 
 function gerarTbody(){
@@ -189,7 +219,9 @@ function gerarTbody(){
     dados.alunos.forEach((aluno, row) => {
         const tr = document.createElement("tr");
         tr.dataset.nome = (aluno.nome || "").toLowerCase();
+        if(selecionados.has(row)) tr.classList.add("linha-selecionada");
 
+        tr.appendChild(criarCelulaSelecao(row));
         tr.appendChild(criarCelulaNome(aluno, row));
 
         dados.atividades.forEach((_, col) => {
@@ -211,6 +243,29 @@ function gerarTbody(){
     });
 
     return tbody;
+}
+
+function criarCelulaSelecao(row){
+    const td = document.createElement("td");
+    td.classList.add("col-selecao");
+
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.classList.add("chk-aluno");
+    chk.checked = selecionados.has(row);
+    chk.addEventListener("change", () => {
+        if(chk.checked){
+            selecionados.add(row);
+            td.parentElement.classList.add("linha-selecionada");
+        }else{
+            selecionados.delete(row);
+            td.parentElement.classList.remove("linha-selecionada");
+        }
+        atualizarBarraSelecao();
+    });
+
+    td.appendChild(chk);
+    return td;
 }
 
 function criarCelulaNome(aluno, row){
@@ -242,10 +297,12 @@ function criarCelulaNota(aluno, row, col){
     td.classList.add("editavel");
     td.dataset.row = row;
     td.dataset.col = col + 1;
-    td.textContent = Number(aluno.notas[col] || 0).toFixed(1);
+    td.textContent = formatarNota(aluno.notas[col]);
+    if(ehAusente(aluno.notas[col])) td.classList.add("nota-ausente");
 
     td.addEventListener("focus", () => {
         td.dataset.original = td.textContent;
+        if(ehAusente(aluno.notas[col])) td.textContent = "F";
         selecionarTudo(td);
     });
 
@@ -262,13 +319,16 @@ function criarCelulaNota(aluno, row, col){
             valor = anterior;
         }
 
-        td.textContent = Number(valor).toFixed(1);
+        td.textContent = formatarNota(valor);
+        td.classList.toggle("nota-ausente", ehAusente(valor));
         aluno.total = calcularTotal(aluno);
 
         const tdTotal = td.parentElement.querySelector(".total");
         if(tdTotal) tdTotal.textContent = aluno.total.toFixed(1);
 
         salvarLocalStorage();
+
+        if(typeof atualizarEstatisticas === "function") atualizarEstatisticas();
     });
 
     return td;
@@ -282,9 +342,7 @@ function criarCelulaObservacao(aluno, row, col){
     td.dataset.col = col;
     td.textContent = aluno.observacoes || "";
 
-    td.addEventListener("focus", () => {
-        td.dataset.original = td.textContent;
-    });
+    td.addEventListener("focus", () => { td.dataset.original = td.textContent; });
 
     td.addEventListener("input", () => {
         aluno.observacoes = td.textContent;
@@ -306,6 +364,7 @@ function criarCelulaAcoes(row){
         const aluno = dados.alunos[row];
         if(confirm("Remover aluno \"" + aluno.nome + "\"?")){
             dados.alunos.splice(row, 1);
+            selecionados.delete(row);
             salvarLocalStorage();
             gerarTabela();
         }

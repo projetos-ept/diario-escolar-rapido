@@ -4,8 +4,17 @@
 
 const NOTA_MAXIMA = 10;
 const TOTAL_MAXIMO = 10;
+const AUSENTE = "F";
+
+function ehAusente(valor){
+    return valor === AUSENTE ||
+        String(valor).trim().toUpperCase() === "F" ||
+        String(valor).trim().toLowerCase() === "ausente";
+}
 
 function normalizarNota(valor){
+    if(ehAusente(valor)) return AUSENTE;
+
     valor = String(valor).replace(",", ".").trim();
 
     if(valor === "") return 0;
@@ -24,9 +33,20 @@ function normalizarNota(valor){
     return Number(valor.toFixed(1));
 }
 
+function notaParaNumero(valor){
+    if(ehAusente(valor)) return 0;
+    const n = Number(valor);
+    return isNaN(n) ? 0 : n;
+}
+
+function formatarNota(valor){
+    if(ehAusente(valor)) return "Ausente";
+    return Number(valor || 0).toFixed(1);
+}
+
 function calcularTotal(aluno){
     const total = aluno.notas.reduce(
-        (a,b) => a + Number(b || 0),
+        (a,b) => a + notaParaNumero(b),
         0
     );
     return Number(Math.min(total, TOTAL_MAXIMO).toFixed(1));
@@ -34,7 +54,7 @@ function calcularTotal(aluno){
 
 function calcularSomaCrua(aluno){
     return aluno.notas.reduce(
-        (a,b) => a + Number(b || 0),
+        (a,b) => a + notaParaNumero(b),
         0
     );
 }

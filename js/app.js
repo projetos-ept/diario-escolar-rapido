@@ -205,6 +205,12 @@ function obterMediaCorte(){
 }
 
 function atualizarEstatisticas(){
+    const elTotal = document.getElementById("estatTotal");
+    const elAprov = document.getElementById("estatAprovados");
+    const elRepr = document.getElementById("estatReprovados");
+    const elCorte = document.getElementById("estatCorte");
+    if(!elTotal || !elAprov || !elRepr || !elCorte) return;
+
     const corte = obterMediaCorte();
     let aprovados = 0;
     let reprovados = 0;
@@ -215,10 +221,73 @@ function atualizarEstatisticas(){
         else reprovados++;
     });
 
-    document.getElementById("estatTotal").textContent = dados.alunos.length;
-    document.getElementById("estatAprovados").textContent = aprovados;
-    document.getElementById("estatReprovados").textContent = reprovados;
-    document.getElementById("estatCorte").textContent = corte.toFixed(1);
+    elTotal.textContent = dados.alunos.length;
+    elAprov.textContent = aprovados;
+    elRepr.textContent = reprovados;
+    elCorte.textContent = corte.toFixed(1);
+}
+
+/* =========================================================
+   SELEÇÃO DE ALUNOS
+========================================================= */
+function atualizarBarraSelecao(){
+    const barra = document.getElementById("barraAcoesSelecao");
+    const contador = document.getElementById("contadorSelecao");
+    if(!barra || !contador) return;
+
+    const n = selecionados.size;
+    contador.textContent = n;
+    barra.hidden = n === 0;
+
+    const chkTodos = document.getElementById("chkSelecionarTodos");
+    if(chkTodos){
+        const visiveis = Array.from(document.querySelectorAll("tbody tr"))
+            .filter(tr => tr.style.display !== "none").length;
+        chkTodos.checked = visiveis > 0 && n >= visiveis;
+        chkTodos.indeterminate = n > 0 && n < visiveis;
+    }
+}
+
+function limparSelecao(){
+    selecionados.clear();
+    document.querySelectorAll(".chk-aluno").forEach(c => c.checked = false);
+    document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("linha-selecionada"));
+    atualizarBarraSelecao();
+}
+
+function imprimirSelecionados(){
+    if(selecionados.size === 0) return;
+    document.querySelectorAll("tbody tr").forEach((tr, row) => {
+        if(!selecionados.has(row)) tr.classList.add("ocultar-impressao");
+    });
+    const limpar = () => {
+        document.querySelectorAll(".ocultar-impressao")
+            .forEach(tr => tr.classList.remove("ocultar-impressao"));
+        window.removeEventListener("afterprint", limpar);
+    };
+    window.addEventListener("afterprint", limpar);
+    if(typeof aplicarConfigImpressao === "function") aplicarConfigImpressao();
+    setTimeout(() => window.print(), 50);
+}
+
+function excluirSelecionados(){
+    const n = selecionados.size;
+    if(n === 0) return;
+    const resposta = prompt(
+        "Você está prestes a excluir " + n + " aluno(s).\n\n" +
+        "Esta ação é irreversível.\n" +
+        "Digite \"excluir\" (sem aspas) para confirmar:"
+    );
+    if(resposta === null) return;
+    if(resposta.trim().toLowerCase() !== "excluir"){
+        alert("Confirmação inválida. Nenhum aluno foi excluído.");
+        return;
+    }
+    const indices = Array.from(selecionados).sort((a,b) => b - a);
+    indices.forEach(i => dados.alunos.splice(i, 1));
+    selecionados.clear();
+    salvarLocalStorage();
+    gerarTabela();
 }
 
 function aplicarFiltros(){
@@ -287,7 +356,9 @@ function smokeTests(){
     console.log("25 =>", normalizarNota(25));
     console.log("3 =>", normalizarNota(3));
     console.log("9.7 =>", normalizarNota(9.7));
-    console.log("TOTAL:", calcularTotal({ notas:[3,2,5] }));
+    console.log("F =>", normalizarNota("F"));
+    console.log("ausente =>", normalizarNota("ausente"));
+    console.log("TOTAL [3,2,F]:", calcularTotal({ notas:[3,2,"F"] }));
 }
 
 /* =========================================================
@@ -301,6 +372,7 @@ function init(){
     configurarBusca();
     configurarPainelImpressao();
     configurarMenu();
+    atualizarEstatisticas();
     smokeTests();
 }
 

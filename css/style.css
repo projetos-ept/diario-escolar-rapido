@@ -381,14 +381,109 @@ th{
     border-color:#fbbf24;
 }
 
-/* célula com o total dos valores máximos */
-.th-total-max{
-    background:#1e3a8a;
+/* =========================================================
+   COLUNA SELEÇÃO (checkboxes)
+========================================================= */
+.col-selecao{
+    width:36px;
+    min-width:36px;
+    text-align:center !important;
+    padding:4px !important;
+}
+
+.chk-aluno,
+#chkSelecionarTodos{
+    width:16px;
+    height:16px;
+    cursor:pointer;
+    margin:0;
+}
+
+.linha-selecionada td{
+    background:#fef3c7 !important;
+}
+
+.linha-selecionada .total{
+    background:#fde68a !important;
+}
+
+/* =========================================================
+   SOMATÓRIA — mesma estrutura visual das avaliações
+========================================================= */
+.th-somatoria{
+    padding:0 !important;
+    vertical-align:top;
+}
+
+.th-somatoria .th-topo{
+    padding:6px;
+    font-weight:bold;
+}
+
+.th-total-max-valor{
+    background:rgba(255,255,255,0.15);
+    border-top:1px solid rgba(255,255,255,0.25);
     color:#fbbf24;
     font-weight:bold;
-    font-size:13px;
+    font-size:12px;
     text-align:center;
-    min-width:80px;
+    padding:3px 4px;
+}
+
+/* =========================================================
+   BARRA DE AÇÕES DE SELEÇÃO
+========================================================= */
+.barra-acoes-selecao{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fef3c7;
+    border:1px solid #fcd34d;
+    padding:10px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+
+.barra-acoes-selecao[hidden]{
+    display:none;
+}
+
+.barra-acoes-selecao .contador-selecao{
+    flex:1;
+    min-width:200px;
+    color:#78350f;
+    font-size:14px;
+}
+
+.barra-acoes-selecao .contador-selecao strong{
+    font-size:16px;
+    color:#7c2d12;
+}
+
+.barra-acoes-selecao button{
+    width:auto;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.barra-acoes-selecao .perigo{
+    background:#b91c1c;
+}
+
+.barra-acoes-selecao .secundario{
+    background:#6b7280;
+}
+
+/* =========================================================
+   NOTA AUSENTE (F)
+========================================================= */
+.nota-ausente{
+    color:#b91c1c;
+    font-weight:bold;
+    font-style:italic;
+    background:#fef2f2;
 }
 
 /* =========================================================
@@ -603,10 +698,30 @@ th{
 
     .menu-container,
     .barra-busca,
+    .barra-acoes-selecao,
+    .col-selecao,
     .acoes,
     .btn-remover,
     .btn-remover-atividade{
         display:none !important;
+    }
+
+    .ocultar-impressao{
+        display:none !important;
+    }
+
+    .nota-ausente{
+        background:#fef2f2 !important;
+        color:#b91c1c !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+    }
+
+    .th-total-max-valor{
+        background:rgba(255,255,255,0.15) !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+        font-size:8px;
     }
 
     .container{
@@ -672,8 +787,7 @@ th{
         print-color-adjust:exact;
     }
 
-    .tr-datas th,
-    .th-total-max{
+    .tr-datas th{
         background:#1e3a8a !important;
         -webkit-print-color-adjust:exact;
         print-color-adjust:exact;
